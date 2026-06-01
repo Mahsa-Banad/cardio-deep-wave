@@ -41,7 +41,7 @@ Additional classes can be added by extending the preprocessing pipeline.
 
 ## Project Structure
 
-
+```text
 cardio-deep-wave/
 ├── README.md
 ├── data
@@ -69,6 +69,7 @@ cardio-deep-wave/
     ├── training
     │   └── trainer.py
     └── utils
+````
 
 ## Installation
 
