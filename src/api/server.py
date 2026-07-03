@@ -8,8 +8,13 @@ from pydantic import BaseModel
 
 from src.models.cnn_lstm import CNNLSTM
 from src.data_loader.pipeline import get_available_records, process_record
+from src.data_loader.download_data import download_mitdb
 
 app = FastAPI()
+
+@app.on_event("startup")
+def startuo_event():
+    download_mitdb
 
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 model = CNNLSTM()
