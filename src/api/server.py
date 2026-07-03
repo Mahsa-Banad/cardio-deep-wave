@@ -14,7 +14,7 @@ app = FastAPI()
 
 @app.on_event("startup")
 def startuo_event():
-    download_mitdb
+    download_mitdb()
 
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 model = CNNLSTM()
