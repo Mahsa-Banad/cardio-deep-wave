@@ -4,13 +4,13 @@ import os
 import glob
 from src.data_loader.download_data import download_mitdb
 from src.data_loader.load_ecg import (load_record)
-from src.preprocessing.filtering import banpass_filter
+from src.preprocessing.filtering import bandpass_filter
 from src.preprocessing.segment import create_heartbeats
 from src.preprocessing.labels import map_label
 from src.models.cnn_lstm import CNNLSTM
 from src.training.trainer import train_model
 from src.evaluation.plotting import plot_curves
-
+from src.data_loader.pipeline import get_available_records, process_record
 
 # device
 device = torch.device(
@@ -24,48 +24,28 @@ print("Device: ", device)
 #dowanload dataset
 download_mitdb()
 
-
-MITDB_RECORDS = [
-    os.path.splitext(os.path.basename(p))[0] 
-    for p in glob.glob("data/mit-bih/*.dat") 
-    if os.path.exists(p.replace(".dat", ".hea"))
-]
+MITDB_RECORDS = get_available_records()
+#MITDB_RECORDS = [
+ #   os.path.splitext(os.path.basename(p))[0] 
+  #  for p in glob.glob("data/mit-bih/*.dat") 
+   # if os.path.exists(p.replace(".dat", ".hea"))
+#]
 
 all_beats = []
 all_labels = []
 
 for record_id in MITDB_RECORDS:
-    record_path = f"data/mit-bih/{record_id}"
+    
     try:
-        # load record
-        signal, peaks, labels = load_record(record_path)
+        beats, mapped_labels = process_record(record_id)
     except:
         print(f"[SKIP] Record {record_id}")
         continue
-    #filtering
-    signal = banpass_filter(signal)
-
-    #create beats
-    beats = create_heartbeats(signal, peaks)
-
-    #labels
-    mapped_labels = []
-    for label in labels:
-         mapped = map_label(label)
-         if mapped != -1:
-            mapped_labels.append(mapped)
-
-    #align lengths
-    min_len = min(
-        len(beats),
-          len(mapped_labels))
-
-    beats = beats[:min_len]
-    mapped_labels = mapped_labels[:min_len]
+  
 
     all_beats.extend(beats)
     all_labels.extend(mapped_labels)
-    print(f"[OK] Record {record_id} : {min_len} beats")
+    print(f"[OK] Record {record_id} : {len(beats)} beats")
 print(f"Total beats: {len(all_beats)}")
 
 

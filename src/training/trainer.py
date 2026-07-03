@@ -118,7 +118,7 @@ def train_model(
         #Save Best Model
         if accuracy > best_accuracy:
             best_accuracy = accuracy
-            os.makedirs("save_models", exist_ok=True)
+            os.makedirs("saved_models", exist_ok=True)
 
             torch.save(
                 model.state_dict(),

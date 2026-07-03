@@ -1,6 +1,6 @@
 from scipy.signal import butter, filtfilt
 
-def banpass_filter(
+def bandpass_filter(
         signal,
         lowcut = 0.5,
         highcut = 40,
